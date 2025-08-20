@@ -116,15 +116,42 @@ The script offers different paths based on your environment:
    cd Office-PowerPoint-MCP-Server
    ```
 
-2. Install dependencies:
+2. Create and activate a virtual environment (recommended):
+   - macOS/Linux:
+     ```bash
+     python3 -m venv .venv
+     source .venv/bin/activate
+     ```
+   - Windows (PowerShell):
+     ```powershell
+     py -3 -m venv .venv
+     .venv\Scripts\Activate.ps1
+     ```
+
+3. Upgrade pip and install dependencies:
    ```bash
-   pip install -r requirements.txt
+   python -m pip install -U pip
+   python -m pip install -r requirements.txt
    ```
 
-3. Make the server executable:
+4. (Optional) Make the server script executable on Unix-like systems:
    ```bash
    chmod +x ppt_mcp_server.py
    ```
+
+5. Run the server:
+   - Stdio (default, for MCP clients that spawn the process):
+     ```bash
+     python ppt_mcp_server.py
+     ```
+   - HTTP (view logs directly in terminal):
+     ```bash
+     python ppt_mcp_server.py --transport http --port 8000
+     ```
+   - SSE:
+     ```bash
+     python ppt_mcp_server.py --transport sse --port 8000
+     ```
 
 ## Usage
 
