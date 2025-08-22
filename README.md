@@ -922,6 +922,8 @@ Templates automatically adjust to content:
 ```
 Office-PowerPoint-MCP-Server/
 ├── ppt_mcp_server.py          # Main consolidated server (v2.0)
+├── config.py                  # Centralized configuration management
+├── .env.example              # Configuration template file
 ├── slide_layout_templates.json # 25+ professional slide templates with dynamic features
 ├── tools/                     # 11 specialized tool modules (32 tools total)
 │   ├── __init__.py
@@ -968,6 +970,84 @@ Office-PowerPoint-MCP-Server/
 - **Advanced template system** with auto-generation capabilities
 - **Professional design tools** with multiple effects and styling options
 - **Specialized features** including hyperlinks, connectors, and slide masters
+
+### **Developer Experience**
+- **Clear responsibility boundaries** between modules
+- **Easier debugging** with smaller, focused files
+- **Simpler testing** with isolated functionality
+- **Enhanced maintainability** through separation of concerns
+
+## ⚙️ Configuration
+
+PowerPoint MCP Server uses a centralized configuration system that supports environment variables, `.env` files, and default values with the following precedence:
+
+1. **Environment variables** (highest priority)
+2. **`.env` file** values
+3. **Default values** (lowest priority)
+
+### **Available Configuration Settings**
+
+#### **Server Configuration**
+- `PPT_MCP_PORT` - Server port for HTTP/SSE transport (default: 8000)
+- `PPT_MCP_TRANSPORT` - Default transport method (default: "stdio")
+
+#### **Template Configuration**
+- `PPT_TEMPLATE_PATH` - Custom template search paths (colon/semicolon separated)
+  - Default: `['.', './templates', './assets', './resources']`
+
+#### **Font Size Settings**
+- `PPT_MIN_FONT_SIZE` - Minimum allowed font size in points (default: 8)
+- `PPT_MAX_FONT_SIZE` - Maximum allowed font size in points (default: 72)
+
+#### **Slide Dimensions (Advanced)**
+- `PPT_SLIDE_WIDTH_EMU` - Slide width in EMU units (default: 9144000 = 10 inches)
+- `PPT_SLIDE_HEIGHT_EMU` - Slide height in EMU units (default: 6858000 = 7.5 inches)
+- `PPT_MIN_SPACING_EMU` - Minimum spacing between shapes in EMU (default: 91440 = 0.1 inches)
+
+### **Using Configuration**
+
+#### **Environment Variables**
+```bash
+export PPT_MCP_PORT=9000
+export PPT_MIN_FONT_SIZE=10
+export PPT_TEMPLATE_PATH="/path/to/templates:/another/path"
+python ppt_mcp_server.py
+```
+
+#### **.env File**
+Create a `.env` file in the project root:
+```env
+PPT_MCP_PORT=9000
+PPT_MIN_FONT_SIZE=10
+PPT_TEMPLATE_PATH=/path/to/templates
+```
+
+#### **Using .env.example**
+Copy the provided `.env.example` file to `.env` and modify as needed:
+```bash
+cp .env.example .env
+# Edit .env with your preferred settings
+```
+
+### **Configuration Examples**
+
+#### **Development Setup**
+```env
+PPT_MCP_PORT=8080
+PPT_MCP_TRANSPORT=http
+PPT_MIN_FONT_SIZE=6
+PPT_MAX_FONT_SIZE=48
+PPT_TEMPLATE_PATH=./dev-templates:./test-assets
+```
+
+#### **Production Setup**
+```env
+PPT_MCP_PORT=8000
+PPT_MCP_TRANSPORT=stdio
+PPT_MIN_FONT_SIZE=8
+PPT_MAX_FONT_SIZE=72
+PPT_TEMPLATE_PATH=/opt/powerpoint-templates:/usr/share/office-templates
+```
 
 ### **Developer Experience**
 - **Clear responsibility boundaries** between modules

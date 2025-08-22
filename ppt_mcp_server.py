@@ -9,6 +9,7 @@ from typing import Dict, Any
 from mcp.server.fastmcp import FastMCP
 
 # import utils  # Currently unused
+from config import config
 from tools import (
     register_presentation_tools,
     register_content_tools,
@@ -35,35 +36,12 @@ current_presentation_id = None
 def get_template_search_directories():
     """
     Get list of directories to search for templates.
-    Uses environment variable PPT_TEMPLATE_PATH if set, otherwise uses default directories.
+    Uses centralized configuration system.
     
     Returns:
         List of directories to search for templates
     """
-    template_env_path = os.environ.get('PPT_TEMPLATE_PATH')
-    
-    if template_env_path:
-        # If environment variable is set, use it as the primary template directory
-        # Support multiple paths separated by colon (Unix) or semicolon (Windows)
-        import platform
-        separator = ';' if platform.system() == "Windows" else ':'
-        env_dirs = [path.strip() for path in template_env_path.split(separator) if path.strip()]
-        
-        # Verify that the directories exist
-        valid_env_dirs = []
-        for dir_path in env_dirs:
-            expanded_path = os.path.expanduser(dir_path)
-            if os.path.exists(expanded_path) and os.path.isdir(expanded_path):
-                valid_env_dirs.append(expanded_path)
-        
-        if valid_env_dirs:
-            # Add default fallback directories
-            return valid_env_dirs + ['.', './templates', './assets', './resources']
-        else:
-            print(f"Warning: PPT_TEMPLATE_PATH directories not found: {template_env_path}")
-    
-    # Default search directories when no environment variable or invalid paths
-    return ['.', './templates', './assets', './resources']
+    return config.get_template_search_directories()
 
 # ---- Helper Functions ----
 
@@ -434,17 +412,17 @@ if __name__ == "__main__":
         "-t",
         "--transport",
         type=str,
-        default="stdio",
+        default=config.default_transport,
         choices=["stdio", "http", "sse"],
-        help="Transport method for the MCP server (default: stdio)"
+        help=f"Transport method for the MCP server (default: {config.default_transport})"
     )
 
     parser.add_argument(
         "-p",
         "--port",
         type=int,
-        default=8000,
-        help="Port to run the MCP server on (default: 8000)"
+        default=config.default_port,
+        help=f"Port to run the MCP server on (default: {config.default_port})"
     )
     args = parser.parse_args()
     main(args.transport, args.port)
