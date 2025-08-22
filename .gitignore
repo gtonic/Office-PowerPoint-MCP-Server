@@ -8,7 +8,35 @@ wheels/
 
 # Virtual environments
 .venv
+venv/
+env/
+.env
+
+# Development and dependency management
 *.bak
-test/
+pip-compile-output/
+requirements*.lock
+.pip-tools-cache/
+
+# IDE and editor files
 .DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing and coverage
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Documentation
+docs/_build/
+docs/build/
+
+# Temporary files
+test/
 CLAUDE.md

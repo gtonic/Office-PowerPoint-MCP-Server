@@ -70,6 +70,27 @@ A comprehensive MCP (Model Context Protocol) server for PowerPoint manipulation 
 
 ## Installation
 
+### Dependencies
+
+This PowerPoint MCP Server requires the following dependencies:
+
+#### Core Dependencies (Pinned for Reproducibility)
+- **Python 3.6+**: Runtime environment
+- **mcp[cli]==1.13.1**: MCP server framework with CLI support
+- **python-pptx==1.0.2**: PowerPoint file manipulation library
+- **Pillow==11.3.0**: Image processing and enhancement capabilities
+- **fonttools==4.59.1**: Font analysis and optimization utilities
+
+#### Development Dependencies (Optional)
+- **pytest**: Testing framework
+- **black**: Code formatting
+- **flake8**: Code linting
+- **mypy**: Type checking
+- **pre-commit**: Git hooks for code quality
+- **sphinx**: Documentation generation
+
+All dependencies are pinned to specific versions to ensure reproducible builds and consistent behavior across environments.
+
 ### Installing via Smithery
 
 To install PowerPoint Manipulation Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@GongRzhe/Office-PowerPoint-MCP-Server):
@@ -80,9 +101,9 @@ npx -y @smithery/cli install @GongRzhe/Office-PowerPoint-MCP-Server --client cla
 
 ### Prerequisites
 
-- Python 3.6 or higher (as specified in pyproject.toml)
-- pip package manager
-- Optional: uvx for package execution without local installation
+- **Python 3.6 or higher** (as specified in pyproject.toml)
+- **pip package manager** (latest version recommended)
+- **Optional**: uvx for package execution without local installation
 
 ### Installation Options
 
@@ -95,11 +116,11 @@ python setup_mcp.py
 ```
 
 This script will:
-- Check prerequisites
+- Check prerequisites and Python version compatibility
 - Offer installation options:
   - Install from PyPI (recommended for most users)
   - Set up local development environment
-- Install required dependencies
+- Install required dependencies with pinned versions
 - Generate the appropriate MCP configuration file
 - Provide instructions for integrating with Claude Desktop
 
@@ -110,28 +131,182 @@ The script offers different paths based on your environment:
 
 #### Option 2: Manual Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/GongRzhe/Office-PowerPoint-MCP-Server.git
    cd Office-PowerPoint-MCP-Server
    ```
 
-2. Create and activate a virtual environment (recommended):
-   - macOS/Linux:
+2. **Create and activate a virtual environment (strongly recommended):**
+   
+   - **macOS/Linux:**
      ```bash
      python3 -m venv .venv
      source .venv/bin/activate
      ```
-   - Windows (PowerShell):
+   
+   - **Windows (PowerShell):**
      ```powershell
      py -3 -m venv .venv
      .venv\Scripts\Activate.ps1
      ```
 
-3. Upgrade pip and install dependencies:
+3. **Upgrade pip and install dependencies:**
    ```bash
-   python -m pip install -U pip
+   # Upgrade pip to latest version
+   python -m pip install --upgrade pip
+   
+   # Install core dependencies (pinned versions)
    python -m pip install -r requirements.txt
+   
+   # Optional: Install development dependencies
+   python -m pip install -r requirements-dev.txt
+   ```
+
+4. **Verify installation:**
+   ```bash
+   python ppt_mcp_server.py --help
+   ```
+
+#### Option 3: Development Installation
+
+For development work or contributions:
+
+1. **Clone and navigate:**
+   ```bash
+   git clone https://github.com/GongRzhe/Office-PowerPoint-MCP-Server.git
+   cd Office-PowerPoint-MCP-Server
+   ```
+
+2. **Install in editable mode with development dependencies:**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\Activate.ps1
+   
+   pip install --upgrade pip
+   pip install -e .[dev]
+   ```
+
+3. **Install pre-commit hooks (optional but recommended):**
+   ```bash
+   pre-commit install
+   ```
+
+#### Option 4: Using pip-tools for Dependency Management
+
+For enhanced dependency management and reproducibility:
+
+1. **Install pip-tools:**
+   ```bash
+   pip install pip-tools
+   ```
+
+2. **Generate locked dependencies from .in files:**
+   ```bash
+   # Compile core dependencies
+   pip-compile requirements.in
+   
+   # Compile development dependencies  
+   pip-compile requirements-dev.in
+   ```
+
+3. **Install locked dependencies:**
+   ```bash
+   pip-sync requirements.txt requirements-dev.txt
+   ```
+
+4. **Update dependencies:**
+   ```bash
+   # Update all dependencies to latest compatible versions
+   pip-compile --upgrade requirements.in
+   pip-compile --upgrade requirements-dev.in
+   ```
+
+### Dependency Management
+
+This project uses multiple approaches for dependency management to support different workflows:
+
+#### File Structure
+- **requirements.in**: Core production dependency specifications (version ranges)
+- **requirements.txt**: Core production dependencies with exact pinned versions
+- **requirements-dev.in**: Development dependency specifications (version ranges)  
+- **requirements-dev.txt**: Development dependencies with exact pinned versions
+- **pyproject.toml**: Project metadata with optional dependency groups (`dev`, `test`, `docs`)
+
+#### Workflow Options
+
+**Option 1: Direct installation (simple)**
+```bash
+pip install -r requirements.txt              # Core dependencies
+pip install -r requirements-dev.txt          # Development dependencies
+```
+
+**Option 2: pip-tools workflow (recommended for development)**
+```bash
+pip-compile requirements.in                  # Generate requirements.txt
+pip-compile requirements-dev.in              # Generate requirements-dev.txt
+pip-sync requirements.txt requirements-dev.txt  # Install exact versions
+```
+
+**Option 3: Editable installation with extras**
+```bash
+pip install -e .[dev]                        # Install with development extras
+```
+
+#### Updating Dependencies
+
+1. **For pip-tools workflow:**
+   - Edit version ranges in `.in` files
+   - Run `pip-compile --upgrade` to get latest compatible versions
+   - Test thoroughly to ensure compatibility
+
+2. **For direct workflow:**
+   - Update version numbers in requirements files
+   - Test thoroughly to ensure compatibility
+
+3. **Always:**
+   - Update this documentation if needed
+   - Run validation: `python validate_dependencies.py`
+
+#### Dependency Validation
+
+The project includes a dependency validation script to ensure all dependencies are properly installed and used:
+
+```bash
+python validate_dependencies.py
+```
+
+This script will:
+- ✅ Verify all required packages can be imported
+- ✅ Confirm all dependencies are actively used in the codebase  
+- ❌ Identify any missing or unused dependencies
+- 📊 Provide a summary report
+
+Run this after any dependency changes to ensure everything is working correctly.
+
+### Troubleshooting Installation
+
+**Common issues and solutions:**
+
+1. **Python version too old:**
+   ```bash
+   python --version  # Should be 3.6+
+   ```
+
+2. **Permission errors on Windows:**
+   - Run terminal as Administrator, or
+   - Use `--user` flag: `pip install --user -r requirements.txt`
+
+3. **SSL certificate errors:**
+   ```bash
+   pip install --trusted-host pypi.org --trusted-host pypi.python.org -r requirements.txt
+   ```
+
+4. **Virtual environment issues:**
+   ```bash
+   # Remove and recreate virtual environment
+   rm -rf .venv
+   python -m venv .venv
    ```
 
 4. (Optional) Make the server script executable on Unix-like systems:
