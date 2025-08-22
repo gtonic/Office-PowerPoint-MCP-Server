@@ -40,3 +40,6 @@ docs/build/
 # Temporary files
 test/
 CLAUDE.md
+
+# Legacy code (preserved for reference but not committed)
+legacy/

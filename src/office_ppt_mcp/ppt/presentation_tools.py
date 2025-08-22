@@ -5,7 +5,7 @@ Handles presentation creation, opening, saving, and core properties.
 from typing import Dict, List, Optional, Any
 import os
 from mcp.server.fastmcp import FastMCP
-import utils as ppt_utils
+from ..utils import presentation_utils as ppt_utils
 
 
 def register_presentation_tools(app: FastMCP, presentations: Dict, get_current_presentation_id, get_template_search_directories):

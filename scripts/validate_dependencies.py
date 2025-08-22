@@ -25,10 +25,10 @@ def validate_import(package_name, display_name=None):
 def check_dependency_usage():
     """Check that all dependencies are actually used in the codebase."""
     dependencies = {
-        'mcp': ['ppt_mcp_server.py', 'tools/'],
-        'pptx': ['ppt_mcp_server.py', 'tools/', 'utils/'],
-        'PIL': ['utils/design_utils.py'],
-        'fontTools': ['utils/design_utils.py']
+        'mcp': ['ppt_mcp_server.py', 'src/office_ppt_mcp/protocol/', 'src/office_ppt_mcp/ppt/'],
+        'pptx': ['src/office_ppt_mcp/ppt/', 'src/office_ppt_mcp/utils/', 'src/office_ppt_mcp/services/'],
+        'PIL': ['src/office_ppt_mcp/utils/design_utils.py'],
+        'fontTools': ['src/office_ppt_mcp/utils/design_utils.py']
     }
     
     print("\n🔍 Checking dependency usage in codebase:")

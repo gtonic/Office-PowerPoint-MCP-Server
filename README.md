@@ -26,6 +26,99 @@ A comprehensive MCP (Model Context Protocol) server for PowerPoint manipulation 
 
 ![demo](./public/demo.gif)
 
+## 🏗️ Architecture Overview
+
+### Modular Design Structure
+
+The Office PowerPoint MCP Server follows a clean, modular architecture with well-defined boundaries and responsibilities:
+
+```
+src/office_ppt_mcp/
+├── protocol/               # MCP protocol handling and server initialization
+│   ├── __init__.py
+│   ├── mcp_server.py      # FastMCP server setup and tool registration
+│   └── server.py          # Entry point coordination
+├── services/              # Business logic and orchestration
+│   ├── __init__.py
+│   ├── presentation.py    # Presentation lifecycle management
+│   ├── template.py        # Template discovery and validation
+│   ├── content.py         # Content operations coordination
+│   └── design.py          # Design and styling services
+├── ppt/                   # PowerPoint-specific tools and operations
+│   ├── __init__.py
+│   ├── presentation_tools.py    # Presentation management (7 tools)
+│   ├── content_tools.py         # Content manipulation (8 tools)
+│   ├── structural_tools.py      # Slide structure (4 tools)
+│   ├── professional_tools.py    # Design and themes (3 tools)
+│   ├── template_tools.py        # Template operations (7 tools)
+│   ├── hyperlink_tools.py       # Hyperlink management
+│   ├── chart_tools.py           # Chart operations
+│   ├── connector_tools.py       # Shape connectors
+│   ├── master_tools.py          # Slide master management
+│   └── transition_tools.py      # Slide transitions
+├── utils/                 # Common utilities and helpers
+│   ├── __init__.py
+│   ├── core_utils.py           # Error handling & safe operations
+│   ├── presentation_utils.py   # Presentation management utilities
+│   ├── content_utils.py        # Content & slide operations
+│   ├── design_utils.py         # Themes, colors, effects & fonts
+│   ├── template_utils.py       # Template management & dynamic features
+│   └── validation_utils.py     # Text & layout validation
+└── adapters/              # External integrations and I/O
+    ├── __init__.py
+    ├── template_adapter.py     # File system template operations
+    └── file_adapter.py         # General file I/O operations
+```
+
+### Module Responsibilities
+
+#### 🔌 Protocol Module
+- **Purpose**: MCP protocol communication and server lifecycle
+- **Key Components**: FastMCP server initialization, tool registration, transport handling
+- **Boundaries**: Pure protocol concerns, no business logic
+
+#### 🎯 Services Module  
+- **Purpose**: High-level business logic and operation coordination
+- **Key Components**: Presentation management, template services, content orchestration
+- **Boundaries**: Coordinates between tools and utilities, manages state
+
+#### 🎨 PPT Module
+- **Purpose**: PowerPoint-specific tool implementations
+- **Key Components**: 32 specialized tools across 10 focused areas
+- **Boundaries**: Direct PowerPoint operations, isolated tool implementations
+
+#### 🛠️ Utils Module
+- **Purpose**: Common utilities and helper functions  
+- **Key Components**: 68+ utility functions across 6 organized modules
+- **Boundaries**: Reusable functions, no external dependencies
+
+#### 🔗 Adapters Module
+- **Purpose**: External system integrations and I/O operations
+- **Key Components**: File system operations, template discovery
+- **Boundaries**: Interface with external systems, data transformation
+
+### Architecture Benefits
+
+#### **Separation of Concerns**
+- Clear module boundaries prevent coupling between different responsibilities
+- Protocol handling is isolated from business logic and PowerPoint operations
+- Utilities can be independently tested and reused across modules
+
+#### **Maintainability** 
+- Focused modules are easier to understand, debug, and modify
+- Changes in one module have minimal impact on others
+- Clear import paths and dependencies make the codebase navigable
+
+#### **Scalability**
+- New tools can be added to appropriate modules without affecting others
+- Services can be extended to support new business logic
+- Adapters can be created for new external integrations
+
+#### **Testability**
+- Each module can be unit tested in isolation
+- Mock dependencies are easier to create with clear boundaries
+- Integration tests can focus on specific interaction patterns
+
 ## Features
 
 ### Core PowerPoint Operations
@@ -1096,31 +1189,55 @@ Templates automatically adjust to content:
 
 ```
 Office-PowerPoint-MCP-Server/
-├── ppt_mcp_server.py          # Main consolidated server (v2.0)
-├── slide_layout_templates.json # 25+ professional slide templates with dynamic features
-├── tools/                     # 11 specialized tool modules (32 tools total)
+├── ppt_mcp_server.py              # Main entry point (now uses modular architecture)
+├── slide_layout_templates.json   # 25+ professional slide templates with dynamic features
+├── src/office_ppt_mcp/           # Main source package with modular architecture
 │   ├── __init__.py
-│   ├── presentation_tools.py  # Presentation management (7 tools)
-│   ├── content_tools.py       # Content & slides (6 tools)
-│   ├── template_tools.py      # Template operations (7 tools)
-│   ├── structural_tools.py    # Tables, shapes, charts (4 tools)
-│   ├── professional_tools.py  # Themes, effects, fonts (3 tools)
-│   ├── hyperlink_tools.py     # Hyperlink management (1 tool)
-│   ├── chart_tools.py         # Advanced chart operations (1 tool)
-│   ├── connector_tools.py     # Connector lines/arrows (1 tool)
-│   ├── master_tools.py        # Slide master management (1 tool)
-│   └── transition_tools.py    # Slide transitions (1 tool)
-├── utils/                     # 7 organized utility modules (68+ functions)
+│   ├── protocol/                  # MCP protocol handling and server initialization  
+│   │   ├── __init__.py
+│   │   ├── mcp_server.py         # FastMCP server setup and tool registration
+│   │   └── server.py             # Entry point coordination
+│   ├── services/                  # Business logic and orchestration
+│   │   ├── __init__.py
+│   │   ├── presentation.py       # Presentation lifecycle management
+│   │   ├── template.py           # Template discovery and validation
+│   │   ├── content.py            # Content operations coordination
+│   │   └── design.py             # Design and styling services
+│   ├── ppt/                      # PowerPoint-specific tools (32 tools total)
+│   │   ├── __init__.py
+│   │   ├── presentation_tools.py # Presentation management (7 tools)
+│   │   ├── content_tools.py      # Content & slides (8 tools)
+│   │   ├── template_tools.py     # Template operations (7 tools)
+│   │   ├── structural_tools.py   # Tables, shapes, charts (4 tools)
+│   │   ├── professional_tools.py # Themes, effects, fonts (3 tools)
+│   │   ├── hyperlink_tools.py    # Hyperlink management (1 tool)
+│   │   ├── chart_tools.py        # Advanced chart operations (1 tool)
+│   │   ├── connector_tools.py    # Connector lines/arrows (1 tool)
+│   │   ├── master_tools.py       # Slide master management (1 tool)
+│   │   └── transition_tools.py   # Slide transitions (1 tool)
+│   ├── utils/                    # Common utilities (68+ functions)
+│   │   ├── __init__.py
+│   │   ├── core_utils.py         # Error handling & safe operations
+│   │   ├── presentation_utils.py # Presentation management utilities
+│   │   ├── content_utils.py      # Content & slide operations
+│   │   ├── design_utils.py       # Themes, colors, effects & fonts
+│   │   ├── template_utils.py     # Template management & dynamic features
+│   │   └── validation_utils.py   # Text & layout validation
+│   └── adapters/                 # External integrations and I/O
+│       ├── __init__.py
+│       ├── template_adapter.py   # File system template operations
+│       └── file_adapter.py       # General file I/O operations
+├── tests/                        # Test suite for modular structure
 │   ├── __init__.py
-│   ├── core_utils.py          # Error handling & safe operations
-│   ├── presentation_utils.py  # Presentation management utilities
-│   ├── content_utils.py       # Content & slide operations
-│   ├── design_utils.py        # Themes, colors, effects & fonts
-│   ├── template_utils.py      # Template management & dynamic features
-│   └── validation_utils.py    # Text & layout validation
-├── setup_mcp.py              # Interactive setup script
-├── pyproject.toml            # Updated for v2.0
-└── README.md                 # This documentation
+│   └── test_modular_structure.py # Tests for new architecture
+├── scripts/                      # Utility scripts
+│   ├── setup_mcp.py             # Interactive setup script
+│   └── validate_dependencies.py # Dependency validation
+├── legacy/                       # Legacy code (preserved for reference)
+│   ├── tools/                   # Original tools directory
+│   └── utils/                   # Original utils directory
+├── pyproject.toml               # Project metadata and dependencies
+└── README.md                    # This documentation
 ```
 
 ## 🏗️ Architecture Benefits
