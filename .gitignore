@@ -8,8 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
-venv/
-env/
+# Configuration files
 .env
 
 # Development and dependency management

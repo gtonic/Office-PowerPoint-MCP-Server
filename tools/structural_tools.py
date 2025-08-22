@@ -5,6 +5,7 @@ Handles tables, shapes, and charts.
 from typing import Dict, List, Optional, Any
 from mcp.server.fastmcp import FastMCP
 import utils as ppt_utils
+from config import config
 
 
 def register_structural_tools(app: FastMCP, presentations: Dict, get_current_presentation_id, validate_parameters, is_positive, is_non_negative, is_in_range, is_valid_rgb, add_shape_direct):
@@ -21,8 +22,8 @@ def register_structural_tools(app: FastMCP, presentations: Dict, get_current_pre
         height: float,
         data: Optional[List[List[str]]] = None,
         header_row: bool = True,
-        header_font_size: int = 12,
-        body_font_size: int = 10,
+        header_font_size: int = None,
+        body_font_size: int = None,
         header_bg_color: Optional[List[int]] = None,
         body_bg_color: Optional[List[int]] = None,
         border_color: Optional[List[int]] = None,
@@ -30,6 +31,12 @@ def register_structural_tools(app: FastMCP, presentations: Dict, get_current_pre
     ) -> Dict:
         """Add a table to a slide with enhanced formatting options."""
         pres_id = presentation_id if presentation_id is not None else get_current_presentation_id()
+        
+        # Use config defaults if not provided
+        if header_font_size is None:
+            header_font_size = config.header_font_size
+        if body_font_size is None:
+            body_font_size = config.body_font_size
         
         if pres_id is None or pres_id not in presentations:
             return {

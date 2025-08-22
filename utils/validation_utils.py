@@ -3,6 +3,7 @@ Validation utilities for PowerPoint MCP Server.
 Functions for validating and fixing slide content, text fit, and layouts.
 """
 from typing import Dict, List, Optional, Any
+from config import config
 
 
 def validate_text_fit(shape, text_content: str = None, font_size: int = 12) -> Dict:
@@ -41,8 +42,8 @@ def validate_text_fit(shape, text_content: str = None, font_size: int = 12) -> D
             estimated_width = len(text_content) * avg_char_width
             
             # Convert shape dimensions to points (assuming they're in EMU)
-            shape_width_pt = shape.width / 12700  # EMU to points conversion
-            shape_height_pt = shape.height / 12700
+            shape_width_pt = shape.width / config.point_to_emu  # EMU to points conversion
+            shape_height_pt = shape.height / config.point_to_emu
             
             if estimated_width > shape_width_pt:
                 result['fits'] = False
@@ -80,20 +81,26 @@ def validate_text_fit(shape, text_content: str = None, font_size: int = 12) -> D
         return result
 
 
-def validate_and_fix_slide(slide, auto_fix: bool = True, min_font_size: int = 8, 
-                          max_font_size: int = 72) -> Dict:
+def validate_and_fix_slide(slide, auto_fix: bool = True, min_font_size: int = None, 
+                          max_font_size: int = None) -> Dict:
     """
     Comprehensively validate and automatically fix slide content issues.
     
     Args:
         slide: The slide object to validate
         auto_fix: Whether to automatically apply fixes
-        min_font_size: Minimum allowed font size
-        max_font_size: Maximum allowed font size
+        min_font_size: Minimum allowed font size (uses config default if None)
+        max_font_size: Maximum allowed font size (uses config default if None)
         
     Returns:
         Dictionary with validation results and applied fixes
     """
+    # Use config defaults if not provided
+    if min_font_size is None:
+        min_font_size = config.min_font_size
+    if max_font_size is None:
+        max_font_size = config.max_font_size
+        
     result = {
         'validation_passed': True,
         'issues_found': [],
@@ -135,7 +142,7 @@ def validate_and_fix_slide(slide, auto_fix: bool = True, min_font_size: int = 8,
                         for paragraph in shape.text_frame.paragraphs:
                             for run in paragraph.runs:
                                 if hasattr(run, 'font'):
-                                    run.font.size = suggested_size * 12700  # Convert to EMU
+                                    run.font.size = config.points_to_emu(suggested_size)
                         
                         fix = f"{shape_name}: Adjusted font size to {suggested_size}pt"
                         result['fixes_applied'].append(fix)
@@ -146,12 +153,12 @@ def validate_and_fix_slide(slide, auto_fix: bool = True, min_font_size: int = 8,
                         result['warnings'].append(warning)
             
             # Check for other potential issues
-            if len(shape.text_frame.text) > 500:  # Very long text
-                result['warnings'].append(f"{shape_name}: Contains very long text (>500 chars)")
+            if len(shape.text_frame.text) > config.max_text_length_warning:
+                result['warnings'].append(f"{shape_name}: Contains very long text (>{config.max_text_length_warning} chars)")
             
             # Check for empty paragraphs
             empty_paragraphs = sum(1 for p in shape.text_frame.paragraphs if not p.text.strip())
-            if empty_paragraphs > 2:
+            if empty_paragraphs > config.max_empty_paragraphs:
                 result['warnings'].append(f"{shape_name}: Contains {empty_paragraphs} empty paragraphs")
         
         # Check slide-level issues
@@ -212,8 +219,8 @@ def validate_slide_layout(slide) -> Dict:
             result['suggestions'].append("Consider repositioning overlapping shapes")
         
         # Check for shapes outside slide boundaries
-        slide_width = 10 * 914400  # Standard slide width in EMU
-        slide_height = 7.5 * 914400  # Standard slide height in EMU
+        slide_width = config.slide_width_emu
+        slide_height = config.slide_height_emu
         
         shapes_outside = []
         for i, shape in enumerate(shapes):
@@ -230,7 +237,7 @@ def validate_slide_layout(slide) -> Dict:
         # Check shape spacing
         if len(shapes) > 1:
             min_spacing = check_minimum_spacing(shapes)
-            if min_spacing < 0.1 * 914400:  # Less than 0.1 inch spacing
+            if min_spacing < config.min_shape_spacing_emu:
                 result['suggestions'].append("Consider increasing spacing between shapes")
         
         return result

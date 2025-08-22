@@ -6,6 +6,7 @@ and advanced features like dynamic sizing, auto-wrapping, and visual effects.
 from typing import Dict, List, Optional, Any
 from mcp.server.fastmcp import FastMCP
 import utils.template_utils as template_utils
+from config import config
 
 
 def register_template_tools(app: FastMCP, presentations: Dict, get_current_presentation_id):
@@ -406,8 +407,8 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
         auto_resize: bool = True,
         auto_wrap: bool = True,
         optimize_spacing: bool = True,
-        min_font_size: int = 8,
-        max_font_size: int = 36,
+        min_font_size: int = None,
+        max_font_size: int = None,
         presentation_id: Optional[str] = None
     ) -> Dict:
         """
@@ -418,11 +419,17 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
             auto_resize: Whether to automatically resize fonts to fit containers
             auto_wrap: Whether to apply intelligent text wrapping
             optimize_spacing: Whether to optimize line spacing
-            min_font_size: Minimum allowed font size
-            max_font_size: Maximum allowed font size
+            min_font_size: Minimum allowed font size (uses config default if None)
+            max_font_size: Maximum allowed font size (uses config default if None)
             presentation_id: Presentation ID (uses current if None)
         """
         pres_id = presentation_id if presentation_id is not None else get_current_presentation_id()
+        
+        # Use config defaults if not provided
+        if min_font_size is None:
+            min_font_size = config.template_min_font_size
+        if max_font_size is None:
+            max_font_size = config.template_max_font_size
         
         if pres_id is None or pres_id not in presentations:
             return {
@@ -469,7 +476,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
                     
                     # Apply auto-wrap if enabled
                     if auto_wrap:
-                        current_font_size = 14  # Default assumption
+                        current_font_size = config.default_font_size  # Default assumption
                         if shape.text_frame.paragraphs and shape.text_frame.paragraphs[0].runs:
                             if shape.text_frame.paragraphs[0].runs[0].font.size:
                                 current_font_size = shape.text_frame.paragraphs[0].runs[0].font.size.pt
