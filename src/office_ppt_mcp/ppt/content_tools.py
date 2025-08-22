@@ -4,7 +4,7 @@ Handles slides, text, images, and content manipulation.
 """
 from typing import Dict, List, Optional, Any, Union
 from mcp.server.fastmcp import FastMCP
-import utils as ppt_utils
+from ..utils import content_utils as ppt_utils
 import tempfile
 import base64
 import os

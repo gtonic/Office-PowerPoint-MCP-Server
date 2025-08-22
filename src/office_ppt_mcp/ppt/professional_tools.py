@@ -4,7 +4,7 @@ Handles themes, effects, fonts, and advanced formatting.
 """
 from typing import Dict, List, Optional, Any
 from mcp.server.fastmcp import FastMCP
-import utils as ppt_utils
+from ..utils import design_utils as ppt_utils
 
 
 def register_professional_tools(app: FastMCP, presentations: Dict, get_current_presentation_id):

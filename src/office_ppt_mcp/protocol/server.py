@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 MCP Server for PowerPoint manipulation using python-pptx.
-Entry point using the new modular architecture.
+Entry point that uses the new modular architecture.
 """
 import argparse
 from src.office_ppt_mcp.protocol.mcp_server import main

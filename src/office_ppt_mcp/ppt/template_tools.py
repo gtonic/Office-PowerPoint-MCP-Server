@@ -5,7 +5,7 @@ and advanced features like dynamic sizing, auto-wrapping, and visual effects.
 """
 from typing import Dict, List, Optional, Any
 from mcp.server.fastmcp import FastMCP
-import utils.template_utils as template_utils
+from ..utils.template_utils import *
 
 
 def register_template_tools(app: FastMCP, presentations: Dict, get_current_presentation_id):
@@ -15,8 +15,8 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
     def list_slide_templates() -> Dict:
         """List all available slide layout templates."""
         try:
-            available_templates = template_utils.get_available_templates()
-            usage_examples = template_utils.get_template_usage_examples()
+            available_templates = get_available_templates()
+            usage_examples = get_template_usage_examples()
             
             return {
                 "available_templates": available_templates,
@@ -67,7 +67,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
         slide = pres.slides[slide_index]
         
         try:
-            result = template_utils.apply_slide_template(
+            result = apply_slide_template(
                 slide, template_id, color_scheme, 
                 content_mapping or {}, image_paths or {}
             )
@@ -130,7 +130,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
             slide_index = len(pres.slides) - 1
             
             # Apply template
-            result = template_utils.apply_slide_template(
+            result = apply_slide_template(
                 slide, template_id, color_scheme,
                 content_mapping or {}, image_paths or {}
             )
@@ -212,7 +212,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
                 pres.core_properties.title = presentation_title
             
             # Create slides from template sequence
-            result = template_utils.create_presentation_from_template_sequence(
+            result = create_presentation_from_template_sequence(
                 pres, template_sequence, color_scheme
             )
             
@@ -245,7 +245,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
             template_id: ID of the template to get information about
         """
         try:
-            templates_data = template_utils.load_slide_templates()
+            templates_data = load_slide_templates()
             
             if template_id not in templates_data.get('templates', {}):
                 available_templates = list(templates_data.get('templates', {}).keys())
@@ -378,7 +378,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
                 template_sequence.append(template_config)
             
             # Create the presentation
-            result = template_utils.create_presentation_from_template_sequence(
+            result = create_presentation_from_template_sequence(
                 presentations[pres_id], template_sequence, color_scheme
             )
             
@@ -440,7 +440,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
         
         try:
             optimizations_applied = []
-            manager = template_utils.get_enhanced_template_manager()
+            manager = get_enhanced_template_manager()
             
             # Analyze each text shape on the slide
             for i, shape in enumerate(slide.shapes):
@@ -455,7 +455,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
                     
                     # Apply auto-resize if enabled
                     if auto_resize:
-                        optimal_size = template_utils.calculate_dynamic_font_size(
+                        optimal_size = calculate_dynamic_font_size(
                             text, container_width, container_height
                         )
                         optimal_size = max(min_font_size, min(max_font_size, optimal_size))
@@ -463,7 +463,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
                         # Apply the calculated font size
                         for paragraph in shape.text_frame.paragraphs:
                             for run in paragraph.runs:
-                                run.font.size = template_utils.Pt(optimal_size)
+                                run.font.size = Pt(optimal_size)
                         
                         shape_optimizations.append(f"Font resized to {optimal_size}pt")
                     
@@ -474,7 +474,7 @@ def register_template_tools(app: FastMCP, presentations: Dict, get_current_prese
                             if shape.text_frame.paragraphs[0].runs[0].font.size:
                                 current_font_size = shape.text_frame.paragraphs[0].runs[0].font.size.pt
                         
-                        wrapped_text = template_utils.wrap_text_automatically(
+                        wrapped_text = wrap_text_automatically(
                             text, container_width, current_font_size
                         )
                         

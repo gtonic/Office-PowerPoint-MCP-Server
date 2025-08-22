@@ -12,8 +12,8 @@ from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_VERTICAL_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
-import utils.content_utils as content_utils
-import utils.design_utils as design_utils
+from . import content_utils
+from . import design_utils
 
 
 class TextSizeCalculator:
@@ -192,7 +192,7 @@ class EnhancedTemplateManager:
     def load_templates(self, template_file_path: str = None) -> None:
         """Load unified templates with all dynamic features."""
         if template_file_path is None:
-            current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
             # Use the unified template file
             template_file_path = os.path.join(current_dir, 'slide_layout_templates.json')
         

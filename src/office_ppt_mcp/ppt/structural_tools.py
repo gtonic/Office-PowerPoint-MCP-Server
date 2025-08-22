@@ -4,7 +4,7 @@ Handles tables, shapes, and charts.
 """
 from typing import Dict, List, Optional, Any
 from mcp.server.fastmcp import FastMCP
-import utils as ppt_utils
+from ..utils import content_utils as ppt_utils
 
 
 def register_structural_tools(app: FastMCP, presentations: Dict, get_current_presentation_id, validate_parameters, is_positive, is_non_negative, is_in_range, is_valid_rgb, add_shape_direct):
