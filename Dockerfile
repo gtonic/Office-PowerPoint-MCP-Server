@@ -7,11 +7,15 @@ RUN apk add --no-cache gcc musl-dev libffi-dev
 # Set work directory
 WORKDIR /app
 
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies (pinned versions for reproducibility)
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
 # Copy the application code
 COPY . .
-
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose port if needed (not needed for stdio)
 

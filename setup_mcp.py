@@ -103,16 +103,18 @@ def setup_venv():
     # Install or update dependencies
     print("\nInstalling requirements...")
     try:
-        # Install mcp package
-        subprocess.run([pip_path, 'install', 'mcp[cli]'], check=True)
-        # Install python-pptx package
-        subprocess.run([pip_path, 'install', 'python-pptx'], check=True)
-        
-        # Also install dependencies from requirements.txt if it exists
+        # Install dependencies from requirements.txt (with pinned versions)
         requirements_path = os.path.join(base_path, 'requirements.txt')
         if os.path.exists(requirements_path):
+            print("Installing dependencies from requirements.txt (pinned versions)...")
             subprocess.run([pip_path, 'install', '-r', requirements_path], check=True)
-        
+        else:
+            # Fallback to individual package installation if requirements.txt is missing
+            print("requirements.txt not found, installing core packages individually...")
+            subprocess.run([pip_path, 'install', 'mcp[cli]==1.13.1'], check=True)
+            subprocess.run([pip_path, 'install', 'python-pptx==1.0.2'], check=True)
+            subprocess.run([pip_path, 'install', 'Pillow==11.3.0'], check=True)
+            subprocess.run([pip_path, 'install', 'fonttools==4.59.1'], check=True)
         
         print("Requirements installed successfully!")
     except subprocess.CalledProcessError as e:
